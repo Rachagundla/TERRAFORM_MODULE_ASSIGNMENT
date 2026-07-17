@@ -1,0 +1,47 @@
+name: Terraform PR Validation
+
+on:
+  pull_request:
+    branches:
+      - main
+      - test
+      - dev
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  terraform:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - uses: actions/checkout@v4
+
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - uses: hashicorp/setup-terraform@v3
+
+      - run: terraform init
+
+      - run: terraform fmt -check
+
+      - run: terraform validate
+
+      - name: Select tfvars
+        run: |
+          if [[ "${{ github.base_ref }}" == "main" ]]; then
+            echo "TFVARS=environments/prod.tfvars" >> $GITHUB_ENV
+          elif [[ "${{ github.base_ref }}" == "test" ]]; then
+            echo "TFVARS=environments/test.tfvars" >> $GITHUB_ENV
+          else
+            echo "TFVARS=environments/dev.tfvars" >> $GITHUB_ENV
+          fi
+
+      - run: terraform plan -var-file=$TFVARS

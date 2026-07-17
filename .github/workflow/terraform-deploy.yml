@@ -1,0 +1,53 @@
+name: Terraform Deploy
+
+on:
+  push:
+    branches:
+      - dev
+      - test
+      - main
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+
+  terraform:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - uses: actions/checkout@v4
+
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - uses: hashicorp/setup-terraform@v3
+
+      - run: terraform init
+
+      - run: terraform fmt -check
+
+      - run: terraform validate
+
+      - name: Select Environment
+        run: |
+          if [[ "${{ github.ref_name }}" == "main" ]]; then
+            echo "TFVARS=environments/prod.tfvars" >> $GITHUB_ENV
+            echo "ENVIRONMENT=prod" >> $GITHUB_ENV
+          elif [[ "${{ github.ref_name }}" == "test" ]]; then
+            echo "TFVARS=environments/test.tfvars" >> $GITHUB_ENV
+            echo "ENVIRONMENT=test" >> $GITHUB_ENV
+          else
+            echo "TFVARS=environments/dev.tfvars" >> $GITHUB_ENV
+            echo "ENVIRONMENT=dev" >> $GITHUB_ENV
+          fi
+
+      - run: terraform plan -var-file=$TFVARS
+
+      - run: terraform apply -auto-approve -var-file=$TFVARS
