@@ -3,7 +3,10 @@ name: Terraform PR Validation
 on:
   push:
     branches:
-      - feature/github-acttions
+      - feature/github-actions
+      - dev
+      - test
+      - main
 
   # pull_request:
   #   branches:
