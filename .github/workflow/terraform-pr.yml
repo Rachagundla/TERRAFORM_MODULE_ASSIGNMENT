@@ -13,11 +13,9 @@ permissions:
 
 jobs:
   terraform:
-
     runs-on: ubuntu-latest
 
     steps:
-
       - uses: actions/checkout@v4
 
       - uses: azure/login@v2
@@ -28,20 +26,28 @@ jobs:
 
       - uses: hashicorp/setup-terraform@v3
 
-      - run: terraform init
+      - name: Terraform Init
+        run: terraform init
 
-      - run: terraform fmt -check
+      - name: Terraform Format Check
+        run: terraform fmt -check
 
-      - run: terraform validate
+      - name: Terraform Validate
+        run: terraform validate
 
-      - name: Select tfvars
+      - name: Select Environment
         run: |
-          if [[ "${{ github.base_ref }}" == "main" ]]; then
-            echo "TFVARS=environments/prod.tfvars" >> $GITHUB_ENV
-          elif [[ "${{ github.base_ref }}" == "test" ]]; then
-            echo "TFVARS=environments/test.tfvars" >> $GITHUB_ENV
-          else
-            echo "TFVARS=environments/dev.tfvars" >> $GITHUB_ENV
-          fi
+          case "${{ github.base_ref }}" in
+            main)
+              echo "TFVARS=environments/prod.tfvars" >> $GITHUB_ENV
+              ;;
+            test)
+              echo "TFVARS=environments/test.tfvars" >> $GITHUB_ENV
+              ;;
+            dev)
+              echo "TFVARS=environments/dev.tfvars" >> $GITHUB_ENV
+              ;;
+          esac
 
-      - run: terraform plan -var-file=$TFVARS
+      - name: Terraform Plan
+        run: terraform plan -var-file=$TFVARS

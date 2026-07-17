@@ -12,42 +12,57 @@ permissions:
   contents: read
 
 jobs:
-
   terraform:
-
     runs-on: ubuntu-latest
 
+    environment:
+      name: ${{ github.ref_name == 'main' && 'prod' || github.ref_name }}
+
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-      - uses: actions/checkout@v4
-
-      - uses: azure/login@v2
+      - name: Azure Login
+        uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - uses: hashicorp/setup-terraform@v3
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
 
-      - run: terraform init
+      - name: Terraform Init
+        run: terraform init
 
-      - run: terraform fmt -check
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
 
-      - run: terraform validate
+      - name: Terraform Validate
+        run: terraform validate
 
       - name: Select Environment
         run: |
-          if [[ "${{ github.ref_name }}" == "main" ]]; then
-            echo "TFVARS=environments/prod.tfvars" >> $GITHUB_ENV
-            echo "ENVIRONMENT=prod" >> $GITHUB_ENV
-          elif [[ "${{ github.ref_name }}" == "test" ]]; then
-            echo "TFVARS=environments/test.tfvars" >> $GITHUB_ENV
-            echo "ENVIRONMENT=test" >> $GITHUB_ENV
-          else
-            echo "TFVARS=environments/dev.tfvars" >> $GITHUB_ENV
-            echo "ENVIRONMENT=dev" >> $GITHUB_ENV
-          fi
+          case "${{ github.ref_name }}" in
+            main)
+              echo "TFVARS=environments/prod.tfvars" >> $GITHUB_ENV
+              echo "ENVIRONMENT=prod" >> $GITHUB_ENV
+              ;;
+            test)
+              echo "TFVARS=environments/test.tfvars" >> $GITHUB_ENV
+              echo "ENVIRONMENT=test" >> $GITHUB_ENV
+              ;;
+            dev)
+              echo "TFVARS=environments/dev.tfvars" >> $GITHUB_ENV
+              echo "ENVIRONMENT=dev" >> $GITHUB_ENV
+              ;;
+          esac
 
-      - run: terraform plan -var-file=$TFVARS
+      - name: Terraform Plan
+        run: terraform plan -var-file=$TFVARS -out=tfplan
 
-      - run: terraform apply -auto-approve -var-file=$TFVARS
+      - name: Show Terraform Plan
+        run: terraform show -no-color tfplan
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve tfplan
