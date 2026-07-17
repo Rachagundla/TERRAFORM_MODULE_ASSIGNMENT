@@ -14,19 +14,19 @@ resource_groups = {
   rg1 = {
     name     = "rg1"
     location = "Central India"
-    tags = {}
+    tags     = {}
   }
 
   rg2 = {
     name     = "rg2"
     location = "Central India"
-    tags = {}
+    tags     = {}
   }
 
   rg3 = {
     name     = "rg3"
     location = "Central India"
-    tags = {}
+    tags     = {}
   }
 }
 
@@ -34,24 +34,24 @@ resource_groups = {
 # declaring Vnet, Subnet, Nsg's for dev resources
 virtual_networks = {
   network = {
-    name = "vnet"
-    location = "Central India"
+    name           = "vnet"
+    location       = "Central India"
     resource_group = "rg1"
-    address_space = ["10.0.0.0/16"]
+    address_space  = ["10.0.0.0/16"]
   }
 }
 subnets = {
   network = {
-    name = "frontend"
+    name                 = "frontend"
     virtual_network_name = "vnet"
-    resource_group_name = "rg1"
-    address_prefixes = ["10.0.1.0/24"]
+    resource_group_name  = "rg1"
+    address_prefixes     = ["10.0.1.0/24"]
   }
 }
 network_security_groups = {
   network = {
-    name = "nsg"
-    location = "Central India"
+    name                = "nsg"
+    location            = "Central India"
     resource_group_name = "rg1"
   }
 }
@@ -60,10 +60,10 @@ network_security_groups = {
 
 storage_accounts = {
   storage1 = {
-    name = "storage001"
-    resource_group_name = "rg1"
-    location = "Central India"
-    account_tier = "Standard"
+    name                     = "storage001"
+    resource_group_name      = "rg1"
+    location                 = "Central India"
+    account_tier             = "Standard"
     account_replication_type = "LRS"
     containers = [
       "images",
@@ -73,10 +73,10 @@ storage_accounts = {
   }
 
   storage2 = {
-    name = "storage002"
-    resource_group_name = "rg1"
-    location = "Central India"
-    account_tier = "Standard"
+    name                     = "storage002"
+    resource_group_name      = "rg1"
+    location                 = "Central India"
+    account_tier             = "Standard"
     account_replication_type = "GRS"
     containers = [
       "backup",
@@ -105,14 +105,14 @@ key_vaults = {
 rbac_assignments = {
   developer = {
     key_vault_key = "kv1"
-    principal_id = "bc073855-a47c-408f-94c9-69f7fbd0f915"
-    role_name = "Key Vault Secrets Officer"
+    principal_id  = "bc073855-a47c-408f-94c9-69f7fbd0f915"
+    role_name     = "Key Vault Secrets Officer"
   }
 
   admin = {
     key_vault_key = "kv1"
-    principal_id = "bc073855-a47c-408f-94c9-69f7fbd0f915"
-    role_name = "Key Vault Administrator"
+    principal_id  = "bc073855-a47c-408f-94c9-69f7fbd0f915"
+    role_name     = "Key Vault Administrator"
   }
 
 }
@@ -121,8 +121,8 @@ access_policies = {
 
   developer = {
     key_vault_key = "kv1"
-    tenant_id = "a32338c0-8892-4dd8-bfec-ad4f7d5b40a1"
-    object_id = "bc073855-a47c-408f-94c9-69f7fbd0f915"
+    tenant_id     = "a32338c0-8892-4dd8-bfec-ad4f7d5b40a1"
+    object_id     = "bc073855-a47c-408f-94c9-69f7fbd0f915"
     secret_permissions = [
       "Get",
       "List",
@@ -144,22 +144,22 @@ access_policies = {
 app_service_plans = {
   plan1 = {
     resource_group_name = "rg1"
-    location = "Central India"
-    sku_name = "B1"
-    os_type = "Windows"
+    location            = "Central India"
+    sku_name            = "B1"
+    os_type             = "Windows"
   }
 }
 web_apps = {
   app1 = {
-    name = "webapp001"
+    name                = "webapp001"
     resource_group_name = "rg1"
-    location = "Central India"
-    plan_name = "plan1"
+    location            = "Central India"
+    plan_name           = "plan1"
   }
   app2 = {
-    name = "webapp002"
+    name                = "webapp002"
     resource_group_name = "rg1"
-    location = "Central India"
-    plan_name = "plan1"
+    location            = "Central India"
+    plan_name           = "plan1"
   }
 }

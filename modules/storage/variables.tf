@@ -7,7 +7,7 @@ variable "storage_accounts" {
     location                 = string
     account_tier             = string
     account_replication_type = string
-    containers = list(string)
+    containers               = list(string)
   }))
 }
 

@@ -6,13 +6,13 @@ global = {
     ManagedBy = "Terraform"
   }
 }
-resource_groups = {     
+resource_groups = {
   rg1 = {
     name     = "abc-test-rg"
     location = "Central India"
     tags = {
       Environment = "Test"
-      Owner = "Pavan"
+      Owner       = "Pavan"
     }
   }
 }

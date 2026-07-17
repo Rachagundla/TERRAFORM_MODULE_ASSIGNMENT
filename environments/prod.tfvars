@@ -13,7 +13,7 @@ resource_groups = {
     location = "Central India"
     tags = {
       Environment = "Production"
-      Owner = "Pavan"
+      Owner       = "Pavan"
     }
   }
 }

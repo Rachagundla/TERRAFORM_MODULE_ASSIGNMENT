@@ -7,5 +7,5 @@ resource "azurerm_resource_group" "rg" {
     each.value.tags,
     {
       Environment = var.global.environment
-    })
+  })
 }

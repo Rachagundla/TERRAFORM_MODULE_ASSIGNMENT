@@ -1,6 +1,6 @@
 output "vnet_ids" {
   value = {
-    for key, value in azurerm_virtual_network.vnet : 
+    for key, value in azurerm_virtual_network.vnet :
     key => value.id
   }
 }
